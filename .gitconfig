@@ -1,0 +1,57 @@
+[user]
+	name = machty
+	email = machty@gmail.com
+
+[github]
+  user = machty
+
+[core]
+	excludesfile = /Users/machty/.gitignore
+  whitespace = trailing-space,space-before-tab
+	editor = /usr/local/bin/nvim
+
+[push]
+  default = tracking
+
+[color]
+  branch = auto
+  diff = auto
+  status = auto
+  sh = auto
+  ui = auto
+
+[color "sh"]
+  branch = green
+  workdir = blue
+  dirty = red
+
+[branch]
+  autosetupmerge = true
+
+[alias]
+	undo-commit = reset --soft HEAD^
+  s = status
+  r = remote
+  c = commit -v
+  co = checkout
+  d  = diff
+  dc = d --cached
+  amend = commit --amend
+  aa = add --all
+  pullff = pull --ff-only
+  noff = merge --no-ff
+  l = log --graph --abbrev-commit --date=relative
+  b = branch
+  gg = git grep
+  pr = "!f() { git fetch origin refs/pull/$1/head:pr/$1; } ; f"
+  delete-merged-branches = "!git branch --merged | grep -v master | grep -v $(git symbolic-ref --short HEAD) | xargs git branch -d"
+  sta = "!f() { git subtree add --prefix $1 $1 master --squash; }; f"
+  stu = "!f() { git subtree pull --prefix $1 $1 master --squash; }; f"
+  stp = "!f() { git subtree push --prefix $1 $1 master --squash; }; f"
+
+[format]
+  pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
+
+[merge]
+  conflictstyle = diff3
+
