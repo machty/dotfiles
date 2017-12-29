@@ -17,7 +17,6 @@ Plug 'benizi/vim-automkdir'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'haya14busa/incsearch-easymotion.vim'
 Plug 'haya14busa/incsearch.vim'
-Plug 'scrooloose/nerdcommenter'
 Plug 'scrooloose/nerdtree'
 "Plug 'justinmk/vim-dirvish'
 Plug 'matze/vim-move'
@@ -32,16 +31,20 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-rails'
+Plug 'tpope/vim-rhubarb'
 Plug 'dustinfarris/vim-htmlbars-inline-syntax'
 "Plug 'trevordmiller/nova-vim'
 "Plug 'vimwiki/vimwiki'
 Plug 'w0rp/ale'
 Plug 'farmergreg/vim-lastplace'
 Plug 'mattn/emmet-vim'
+Plug 'lfv89/vim-interestingwords'
+Plug 'terryma/vim-multiple-cursors'
 
 call plug#end()
 
 " basic vim behavior
+" ==================
 
 set number
 filetype plugin indent on " Enable filetype-specific indenting and plugins
@@ -110,35 +113,32 @@ nmap <leader>l :set list!<CR>
 set listchars=tab:▸\ ,eol:¬
 set nolist
 
-" CTRL-P
-
-nmap <C-P> :Denite file_rec<CR>
-
 " vim tabs
+" ========
 
 map ,t <Esc>:tabnew<CR>
 map ,[ <Esc>:tabp<CR>
 map ,] <Esc>:tabn<CR>
 
 " .slim
+" =====
 
 autocmd BufNewFile,BufRead *.slim set nowrap
 
 " Ruby / Rails
+" ============
 
 let g:rubycomplete_rails = 1
 au BufNewFile,BufRead Fastfile set filetype=ruby
 au BufNewFile,BufRead Matchfile set filetype=ruby
 
 " JSON
+" ====
 
 let g:vim_json_syntax_conceal = 0
-
-fun! OpenCurrentDirInFinder()
-  return system("open .")
-endfun
-
-nmap <leader>f. :call OpenCurrentDirInFinder()<CR>
+command! JSONformat silent execute ":%!python -m json.tool"
+command! CSVtojson silent execute ":%!csvtojson.rb"
+command! CSVtojsonpipes silent execute ":%!csvtojson.rb \\|"
 
 " Split current tmux window, running `bundle open` on the
 " argument-specified Gem name. Auto-completes from
@@ -173,37 +173,12 @@ autocmd FileType c,cpp,python,ruby,java,javascript autocmd BufWritePre <buffer> 
 
 au BufNewFile,BufRead *.es6 set filetype=javascript
 
-command! JSONformat silent execute ":%!python -m json.tool"
-command! CSVtojson silent execute ":%!csvtojson.rb"
-command! CSVtojsonpipes silent execute ":%!csvtojson.rb \\|"
-
 " set clipboard=unnamed
-
-" Open markdown files with Chrome.
-autocmd BufEnter *.md exe 'noremap <F5> :!open -a "Google Chrome.app" %:p<CR>'
 
 :nnoremap <Leader>dg :diffget <CR>
 :nnoremap <Leader>dp :diffput <CR>
 
-nmap <buffer> <Leader>q <Plug>(seeing-is-believing-run)
-xmap <buffer> <Leader>q <Plug>(seeing-is-believing-run)
-imap <buffer> <Leader>q <Plug>(seeing-is-believing-run)
-
-xmap <buffer> <Leader>rr <Plug>(seeing-is-believing-mark)
-nmap <buffer> <Leader>rr <Plug>(seeing-is-believing-mark)
-imap <buffer> <Leader>rr <Plug>(seeing-is-believing-mark)
-
-
 set rtp+=/usr/local/opt/fzf
-
-:tnoremap <A-h> <C-\><C-n><C-w>h
-:tnoremap <A-j> <C-\><C-n><C-w>j
-:tnoremap <A-k> <C-\><C-n><C-w>k
-:tnoremap <A-l> <C-\><C-n><C-w>l
-:nnoremap <A-h> <C-w>h
-:nnoremap <A-j> <C-w>j
-:nnoremap <A-k> <C-w>k
-:nnoremap <A-l> <C-w>l
 
 function! ClipboardYank()
   call system('pbcopy', @@)
@@ -215,32 +190,17 @@ endfunction
 vnoremap <silent> y y:call ClipboardYank()<cr>
 vnoremap <silent> d d:call ClipboardYank()<cr>
 
-" <C-\><C-n> is how you get out of terminal mode
+" vim-fugitive
+" ============
 
-" leave this commented out. to paste from osx clipboard do "+p
-"nnoremap <silent> p :call ClipboardPaste()<cr>p
-
-
-nmap <leader>ee <Plug>(seeing-is-believing-mark) " - add mark (# =>) to the line.
-nmap <leader>er <Plug>(seeing-is-believing-run)  " - run all marked lines.
-
-autocmd BufRead,BufNewFile *.js HighlightInlineHbs
-
-" Fugitive
 let g:gist_post_private = 1
 
-" Use ag silver surfer instead of ack
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
-endif
-
-" call janus#add_mapping('ack', 'map', '<leader>f', ':Ack<space>')
+" zoom windows
+" ============
 
 "zoom a vim pane, <C-w>= to re-balance
 nnoremap <leader>- :wincmd _<cr>:wincmd \|<cr>
-
-let g:python2_host_prog = '/usr/local/bin/python'
-let g:python3_host_prog = '/usr/local/bin/python3'
+"<leader>= to balance defined in Janus section
 
 " movement
 " ========
@@ -251,13 +211,13 @@ nnoremap k gk
 " search
 " ======
 
+set ignorecase
+
 " vim-move
-" ====
+" ========
 
 " Move lines up and down with C-J/K
 let g:move_key_modifier = 'C'
-
-set ignorecase
 
 " statusline
 " ==========
@@ -271,37 +231,51 @@ function! Git_branch()
   return empty(l:branch)?'':'['.l:branch.']'
 endfunction
 
+" Janus conventions
+" =================
+
+set statusline=%f\ %m\ %r
 set statusline+=%{Git_branch()}
 set statusline+=\ "
-" filename
-set statusline+=%<%f
-set statusline+=\ "
-" help/modified/readonly
-set statusline+=%h%m%r
-" alignment group
+set statusline+=Line:%l/%L[%p%%]
+set statusline+=Col:%v
+set statusline+=Buf:#%n
+set statusline+=[%b][0x%B]
 set statusline+=%=
-" start error highlight group
 set statusline+=%#StatusLineError#
-" errors from w0rp/ale
 set statusline+=%{ALEGetStatusLine()}
-" reset highlight group
 set statusline+=%#StatusLine#
 set statusline+=\ "
-" line,column,virtual column
-set statusline+=%-14.(%l,%c%V%)
-set statusline+=\ "
-" percentge through file of displayed window
-set statusline+=%P
-
-" Use deoplete.
-call deoplete#enable()
+" Toggle hlsearch with <leader>hs
+nmap <leader>hs :set hlsearch! hlsearch?<CR>
+" Adjust viewports to the same size
+map <Leader>= <C-w>=
+" Some helpers to edit mode
+" http://vimcasts.org/e/14
+nmap <leader>ew :e <C-R>=expand('%:h').'/'<cr>
+nmap <leader>es :sp <C-R>=expand('%:h').'/'<cr>
+nmap <leader>ev :vsp <C-R>=expand('%:h').'/'<cr>
+nmap <leader>et :tabe <C-R>=expand('%:h').'/'<cr>
+" Toggle paste mode
+nmap <silent> <F4> :set invpaste<CR>:set paste?<CR>
+imap <silent> <F4> <ESC>:set invpaste<CR>:set paste?<CR>
 
 " denite
+" ======
 
-"call denite#custom#var('grep', 'recursive_opts', [])
-"call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
-"call denite#custom#var('grep', 'separator', ['--'])
-"call denite#custom#var('grep', 'final_opts', [])
+" Replace CTRL-P to search buffers followed by recursive file search
+nmap <C-P> :Denite buffer file_rec<CR>
+nmap <leader>sap :Denite grep:::!<CR>
+nmap <leader>saP :DeniteCursorWord grep<CR>
+nmap <leader>sab :Denite buffer<CR>
+nmap <leader>sat :Denite outline<CR>
+
+call denite#custom#var('grep', 'command', ['ag'])
+call denite#custom#var('grep', 'default_opts', ['-i', '--vimgrep'])
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'pattern_opt', [])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'final_opts', [])
 
 " ESC in Denite goes into normal mode. ESC again no-ops.
 call denite#custom#map('insert', '<Esc>', '<denite:enter_mode:normal>', 'noremap')
@@ -314,6 +288,14 @@ call denite#custom#map('normal', 'dw', '<denite:delete_word_after_caret>', 'nore
 " When searching with Denite, Ctrl-J/K moves up and down, similar to Emacs helm.
 call denite#custom#map( 'insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map( 'insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
+
+" deoplete
+" ========
+
+call deoplete#enable()
+
+" incsearch
+" =========
 
 " incsearch.vim x fuzzy x vim-easymotion
 
@@ -346,4 +328,30 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'html': ['tidy'],
 \}
+
+" HTMLbars inline syntax highlighting
+" ===================================
+
+autocmd BufRead,BufNewFile *.js HighlightInlineHbs
+
+" vim-commentary
+" ==============
+
+vmap <leader>/ <Plug>Commentary
+nmap <leader>/ <Plug>CommentaryLine
+
+" vim-multiple-cursors
+" ====================
+
+" Prevent clobbering w deoplete
+function! Multiple_cursors_before()
+  if exists('g:deoplete#disable_auto_complete') 
+    let g:deoplete#disable_auto_complete = 1
+  endif
+endfunction
+function! Multiple_cursors_after()
+  if exists('g:deoplete#disable_auto_complete')
+    let g:deoplete#disable_auto_complete = 0
+  endif
+endfunction
 
