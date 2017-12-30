@@ -20,8 +20,6 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'scrooloose/nerdtree'
 "Plug 'justinmk/vim-dirvish'
 Plug 'matze/vim-move'
-"Plug 'mhartington/nvim-typescript'
-"Plug 'racer-rust/vim-racer'
 "Plug 'sbdchd/neoformat'
 "Plug 'sheerun/vim-polyglot'
 Plug 'tpope/vim-commentary'
@@ -33,15 +31,25 @@ Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
 Plug 'dustinfarris/vim-htmlbars-inline-syntax'
-"Plug 'trevordmiller/nova-vim'
+Plug 'trevordmiller/nova-vim'
 "Plug 'vimwiki/vimwiki'
 Plug 'w0rp/ale'
 Plug 'farmergreg/vim-lastplace'
 Plug 'mattn/emmet-vim'
 Plug 'lfv89/vim-interestingwords'
 Plug 'terryma/vim-multiple-cursors'
+Plug 'vim-airline/vim-airline'
+Plug 'rakr/vim-one'
 
 call plug#end()
+
+" vim-one color scheme
+" ====================
+
+set termguicolors
+colorscheme one
+set background=dark
+let g:airline_theme='one'
 
 " basic vim behavior
 " ==================
@@ -139,17 +147,6 @@ let g:vim_json_syntax_conceal = 0
 command! JSONformat silent execute ":%!python -m json.tool"
 command! CSVtojson silent execute ":%!csvtojson.rb"
 command! CSVtojsonpipes silent execute ":%!csvtojson.rb \\|"
-
-" Split current tmux window, running `bundle open` on the
-" argument-specified Gem name. Auto-completes from
-command! -nargs=* -complete=custom,ListGems BundleOpen silent execute "!tmux splitw 'bundle open <args>'"
-
-fun! ListGems(A,L,P)
-  " Note that vim will filter for us... no need to do anything with A args.
-  return system("grep -s '^ ' Gemfile.lock | sed 's/^ *//' | cut -d ' '  -f1 | sed 's/!//' | sort | uniq")
-endfun
-
-nmap <leader>o :BundleOpen
 
 nnoremap <leader>e :lnext<CR>
 
@@ -263,12 +260,15 @@ imap <silent> <F4> <ESC>:set invpaste<CR>:set paste?<CR>
 " denite
 " ======
 
+nmap <leader>sa [denite]
 " Replace CTRL-P to search buffers followed by recursive file search
 nmap <C-P> :Denite buffer file_rec<CR>
-nmap <leader>sap :Denite grep:::!<CR>
-nmap <leader>saP :DeniteCursorWord grep<CR>
-nmap <leader>sab :Denite buffer<CR>
-nmap <leader>sat :Denite outline<CR>
+nmap [denite]p :Denite grep:::!<CR>
+nmap [denite]P :DeniteCursorWord grep<CR>
+nmap [denite]b :Denite buffer<CR>
+nmap [denite]o :Denite outline<CR>
+nmap [denite]t :Denite tag<CR>
+nmap [denite]T :DeniteCursorWord tag<CR>
 
 call denite#custom#var('grep', 'command', ['ag'])
 call denite#custom#var('grep', 'default_opts', ['-i', '--vimgrep'])
@@ -277,12 +277,18 @@ call denite#custom#var('grep', 'pattern_opt', [])
 call denite#custom#var('grep', 'separator', ['--'])
 call denite#custom#var('grep', 'final_opts', [])
 
+call denite#custom#var('outline', 'command', ['ripper-tags'])
+call denite#custom#var('outline', 'file_opt', '-f')
+call denite#custom#var('outline', 'options', [])
+
 " ESC in Denite goes into normal mode. ESC again no-ops.
 call denite#custom#map('insert', '<Esc>', '<denite:enter_mode:normal>', 'noremap')
 call denite#custom#map('normal', '<Esc>', '<NOP>', 'noremap')
 " Ctrl-V in denite opens file in vsplit
 call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+call denite#custom#map('insert', '<C-s>', '<denite:do_action:split>', 'noremap')
 call denite#custom#map('normal', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+call denite#custom#map('normal', '<C-s>', '<denite:do_action:split>', 'noremap')
 call denite#custom#map('normal', 'dw', '<denite:delete_word_after_caret>', 'noremap')
 
 " When searching with Denite, Ctrl-J/K moves up and down, similar to Emacs helm.
