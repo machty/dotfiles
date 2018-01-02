@@ -4,6 +4,8 @@
 # expect to install into bashrc, so we keep all the config there
 # and just source it from here.
 
+# 11/12/17: I made this read-only so that scripts don't try to set it.
+
 if [ -f ~/.bashrc ]; then
     source ~/.bashrc
 fi

@@ -1,11 +1,20 @@
 export HOME=~
 
+# https://github.com/reactioncommerce/reaction/issues/1938
+#$ sudo sysctl -w kern.maxfiles=65536
+#$ sudo sysctl -w kern.maxfilesperproc=65536
+#$ ulimit -n 65536
+
+# 10/31/17: you installed a LaunchDaemon to auto-configure these
+# kernel max file limits at /Library/LaunchDaemons/limit.maxfiles.plist:
+# https://unix.stackexchange.com/questions/108174/how-to-persist-ulimit-settings-in-macos
+
 # Use postgres.app path
-PATH="/Applications/Postgres.app/Contents/Versions/9.4/bin:$PATH"
+PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
 
-export EDITOR="$HOME/bin/mvim"
+export EDITOR="/usr/local/bin/vim"
 
-export PATH="~/bin:$PATH"
+export PATH="/Users/machty/bin:$PATH"
 
 c_red=`tput setaf 1`
 c_green=`tput setaf 2`
@@ -32,6 +41,7 @@ export PS1="\W \$(parse_git_branch) :: "
 export PS1="\W :: "
 
 alias r='rails'
+alias git=hub
 alias precomp='RAILS_ENV=production bundle exec rake assets:precompile'
 alias gpom='git push origin master'
 alias gphm='git push heroku master'
@@ -42,18 +52,34 @@ alias gd='git diff'
 alias gff='git pull --ff-only'
 alias gpr='git pull --rebase'
 alias be='bundle exec'
+alias bef='bundle exec fastlane'
 alias bo='bundle open'
+alias ll='ls -lG'
+
+alias pretty_json='python -m json.tool'
 
 alias nombom='npm cache clear && bower cache clean && rm -rf node_modules bower_components && npm install && bower install'
+alias excnombom='npm cache clear && bower cache clean && rm -rf node_modules bower_components && npm install && bower install && npm link exc-shared'
 alias nom='npm cache clear && rm -rf node_modules && npm install'
 alias bom='bower cache clean && rm -rf bower_components && bower install'
+
+alias rb_stacktrace="echo 'call (void)rb_backtrace()' | lldb -p"
+
+alias androidstudio="open -a /Applications/Android\ Studio.app"
 
 export PATH="$HOME/.rbenv/bin:$PATH"
 
 export EC2_HOME=$HOME/ec2
 export PATH=$PATH:$EC2_HOME/bin
 
-export JAVA_HOME=$(/usr/libexec/java_home)
+# NOTE: this made bash startup slow to a crawl
+#export JAVA_HOME=$(/usr/libexec/java_home)
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
+
+# https://developer.android.com/studio/command-line/variables.html
+# TL;DR, ANDROID_HOME is deprecated, but define both
+export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+export ANDROID_HOME=$HOME/Library/Android/sdk
 
 export NODE_PATH=/usr/local/lib/node_modules:/usr/local/bin/node:$NODE_PATH
 export EXECJS_RUNTIME=Node
@@ -73,33 +99,50 @@ export PATH="$PATH:/usr/local/bin"
 # }}}
 
 # e.g. pt -r staging
-alias pt="heroku addons:open papertrail"
+alias pt="heroku addons:open PAPERTRAIL"
 
 alias curlheaders="curl -s -D - -o /dev/null"
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
-export PATH="$PATH:$HOME/.android-sdk/tools" 
-export PATH="$PATH:$HOME/.android-sdk/platform-tools" 
-
-export ANDROID_HOME=$HOME/.android-sdk
-
 export ANSIBLE_HOSTS=~/.ansible_hosts
 export ANSIBLE_NOCOWS=1
-
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 source $HOME/.dotfiles/.git-completion.bash
 
-
-
-
 [[ -s $HOME/.keys ]]             && source $HOME/.keys
-
-
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# added by travis gem
+[ -f /Users/machty/.travis/travis.sh ] && source /Users/machty/.travis/travis.sh
+
+ulimit -n 5000
+
+export PATH="/usr/local/Cellar/php70/7.0.26_18/bin:$PATH"
+
+complete -C '/usr/local/bin/aws_completer' aws
+
+# Set up direnv to eval ./.envrc
+# https://github.com/direnv/direnv#bash
+eval "$(direnv hook bash)"
+
+# Set up chruby and enable auto-switching based on ./.ruby-version
+source /usr/local/share/chruby/chruby.sh
+source /usr/local/share/chruby/auto.sh
+
+export PATH="$HOME/.fastlane/bin:$PATH"
+export GOPATH="$HOME/go"
+export PATH="$GOPATH/bin:$PATH"
+
+source $HOME/.cargo/env
+
+export PATH=$HOME/code/flutter/flutter/bin:$PATH
+
+export CLICOLOR=1
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+
