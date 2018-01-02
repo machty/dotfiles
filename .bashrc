@@ -1,10 +1,5 @@
 export HOME=~
 
-# https://github.com/reactioncommerce/reaction/issues/1938
-#$ sudo sysctl -w kern.maxfiles=65536
-#$ sudo sysctl -w kern.maxfilesperproc=65536
-#$ ulimit -n 65536
-
 # 10/31/17: you installed a LaunchDaemon to auto-configure these
 # kernel max file limits at /Library/LaunchDaemons/limit.maxfiles.plist:
 # https://unix.stackexchange.com/questions/108174/how-to-persist-ulimit-settings-in-macos
@@ -14,6 +9,7 @@ PATH="/Applications/Postgres.app/Contents/Versions/latest/bin:$PATH"
 
 export EDITOR="/usr/local/bin/vim"
 
+export PATH="/Users/machty/.dotfiles/bin:$PATH"
 export PATH="/Users/machty/bin:$PATH"
 
 c_red=`tput setaf 1`
@@ -72,8 +68,6 @@ export PATH="$HOME/.rbenv/bin:$PATH"
 export EC2_HOME=$HOME/ec2
 export PATH=$PATH:$EC2_HOME/bin
 
-# NOTE: this made bash startup slow to a crawl
-#export JAVA_HOME=$(/usr/libexec/java_home)
 export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home
 
 # https://developer.android.com/studio/command-line/variables.html

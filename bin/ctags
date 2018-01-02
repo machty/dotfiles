@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# this shell script is placed in PATH before exuberant_ctags
+# to allow us to branch which ctags executable we use:
+# for Ruby: ripper-ctags, otherwise: vanilla exuberant ctags
+
+if [ --languages=Ruby = "$1" ]; then
+  shift
+  unset RUBYOPT # needed to run inside bundler
+  exec ripper-tags "$@"
+fi
+
+exec exuberant_ctags_5.81 "$@"
+
