@@ -3,7 +3,7 @@
 " Much of this config taken from:
 " https://github.com/sodiumjoe/dotfiles/blob/master/vimrc
 
-call plug#begin('~/.vimplugins')
+call plug#begin('~/.vimetc/plugins')
 
 Plug 'tpope/vim-sensible'
 Plug 'Shougo/denite.nvim'
@@ -30,7 +30,6 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-bundler'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-rhubarb'
-Plug 'dustinfarris/vim-htmlbars-inline-syntax'
 Plug 'trevordmiller/nova-vim'
 "Plug 'vimwiki/vimwiki'
 Plug 'w0rp/ale'
@@ -69,8 +68,8 @@ runtime! macros/matchit.vim
 syntax on
 syntax enable
 scriptencoding utf8
-set backupdir=~/.vim/backups
-set directory=~/.vim/swaps
+set backupdir=~/.vimetc/backups
+set directory=~/.vimetc/swaps
 set undofile
 set undodir=~/.vim/undo
 set noerrorbells
@@ -120,6 +119,12 @@ endif
 nmap <leader>l :set list!<CR>
 set listchars=tab:▸\ ,eol:¬
 set nolist
+
+" vimrc
+" =====
+
+nnoremap <leader>fed :e ~/.dotfiles/.vimrc<CR>
+nnoremap <leader>feR :source ~/.dotfiles/.vimrc<CR>
 
 " vim tabs
 " ========
@@ -291,9 +296,12 @@ call denite#custom#map('normal', '<C-v>', '<denite:do_action:vsplit>', 'noremap'
 call denite#custom#map('normal', '<C-s>', '<denite:do_action:split>', 'noremap')
 call denite#custom#map('normal', 'dw', '<denite:delete_word_after_caret>', 'noremap')
 
-" When searching with Denite, Ctrl-J/K moves up and down, similar to Emacs helm.
+" When searching with Denite, Ctrl-j/k moves up and down, similar to Emacs helm.
+" Also added this for Ctrl-n/p since autocomplete uses that
 call denite#custom#map( 'insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
+call denite#custom#map( 'insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
 call denite#custom#map( 'insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
+call denite#custom#map( 'insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
 
 " deoplete
 " ========
@@ -334,11 +342,6 @@ let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'html': ['tidy'],
 \}
-
-" HTMLbars inline syntax highlighting
-" ===================================
-
-autocmd BufRead,BufNewFile *.js HighlightInlineHbs
 
 " vim-commentary
 " ==============
